@@ -20,21 +20,24 @@ class Perceptron():
 		for i in range(self.epochs):
 			for j in range(X.shape[0]):
 				y_=self.W[0]+np.dot(X[j,:],self.W[1:])
+				if (y_>0):
+					y_=1
+				else:
+					y_=-1
 				#weight updates!
 				if ((y[j]-y_)!=0):
 					update=self.learning_rate*(y[j]-y_)
 					self.W[0]+=update
 					for k in range(X.shape[1]):
-						self.W[k+1]=self.W[k+1] + update
+						self.W[k+1]=self.W[k+1] + X[j,k]*update
 		return;
 		
-
 	def predict(self,data):
 		output=self.W[0] + np.dot(data,self.W[1:])
 		print ("output value:", output)
 		if (output<0) :
 			return 'Iris-setosa'
-		elif:
+		else:
 			return 'Iris-veri'
 	
 df = pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data', header=None)
@@ -50,8 +53,8 @@ X=df.iloc[0:100,[0,2]].values
 
 fancyPerceptron=Perceptron(0.1,10)
 fancyPerceptron.fit(X,y)
-returned=fancyPerceptron.predict(df.iloc[30,[0,2]].values)
-print ('Predicted:',returned)
-print ('Actual: ', df.iloc[30,4])
+returned=fancyPerceptron.predict(df.iloc[51,[0,2]].values)
+print ("Predicted: ",returned)
+print ('Actual: ', df.iloc[51,4])
 
 	
