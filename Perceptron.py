@@ -34,7 +34,7 @@ class Perceptron():
 		
 	def predict(self,data):
 		output=self.W[0] + np.dot(data,self.W[1:])
-		print ("output value:", output)
+		#print ("output value:", output)
 		if (output<0) :
 			return 'Iris-setosa'
 		else:
@@ -56,5 +56,8 @@ fancyPerceptron.fit(X,y)
 returned=fancyPerceptron.predict(df.iloc[51,[0,2]].values)
 print ("Predicted: ",returned)
 print ('Actual: ', df.iloc[51,4])
-
+#test time! :D
+for i in range(150):
+	print ("Actual ", df.iloc[i,4])
+	print ("Predicted ",fancyPerceptron.predict(df.iloc[i,[0,2]].values))
 	
