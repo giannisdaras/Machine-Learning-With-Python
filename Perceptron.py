@@ -38,7 +38,7 @@ class Perceptron():
 		if (output<0) :
 			return 'Iris-setosa'
 		else:
-			return 'Iris-veri'
+			return 'Iris-vertosa'
 	
 df = pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data', header=None)
 y=df.iloc[0:100,4].values
@@ -49,15 +49,16 @@ X=df.iloc[0:100,[0,2]].values
 # plt.xlabel('Petal length')
 # plt.ylabel('Sepal length')
 # plt.legend(loc='upper left')
-#plt.show()
+# plt.show()
 
 fancyPerceptron=Perceptron(0.1,10)
 fancyPerceptron.fit(X,y)
 returned=fancyPerceptron.predict(df.iloc[51,[0,2]].values)
-print ("Predicted: ",returned)
-print ('Actual: ', df.iloc[51,4])
 #test time! :D
-for i in range(150):
-	print ("Actual ", df.iloc[i,4])
-	print ("Predicted ",fancyPerceptron.predict(df.iloc[i,[0,2]].values))
+for i in range(100):
+	print "Actual ", df.iloc[i,4]
+ 	if (fancyAdaline.predict(df.iloc[i,[0,2]].values)>=0):
+ 		print "Predicted: Iris-versicolor"
+ 	else:
+ 		print "Predicted: Iris-setosa"
 	
