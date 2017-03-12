@@ -22,26 +22,24 @@ class Adaline(object):
 		r=np.random.permutation(len(y))
 		return X[r],y[r]
 	def predict(self,data):
-		result=np.dot(data,self.W[1:])+self.W[0]
-		result=np.where(result>=0,1,-1)
-		return result
-		
+		return np.dot(data,self.W[1:])+self.W[0]
 
 df = pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data', header=None)
-y = df.iloc[0:100, 4].values
-y = np.where(y == 'Iris-setosa', -1, 1)
-X = df.iloc[0:100, [0, 2]].values
-# X_std=np.copy(X)
-# X_std[:,0] = (X[:,0] - X[:,0].mean()) / X[:,0].std()
-# X_std[:,1] = (X[:,1] - X[:,1].mean()) / X[:,1].std()
-fancyAdaline=Adaline(0.01,15)
-fancyAdaline.fit(X,y)
-predictions=fancyAdaline.predict(X)
-print "misclassified: ", (y!=predictions).sum()
-# for i in range(100):
-# 	print "Actual ", df.iloc[i,4]
-#  	if (fancyAdaline.predict(df.iloc[i,[0,2]].values)>=0):
-#  		print "Predicted: Iris-versicolor"
-#  	else:
-#  		print "Predicted: Iris-setosa"
-
+X = df.iloc[0:150, [0, 2]].values
+y = df.iloc[0:150, 4].values
+Y1 = np.where(y == 'Iris-setosa', -1, 1)
+Y2=np.where(y=='Iris-versicolor',-1,1)
+Y3=np.where(y=='Iris-virginica',-1,1)
+fancyAdaline1=Adaline(0.01,15)
+fancyAdaline1.fit(X,Y1)
+fancyAdaline2=Adaline(0.01,15)
+fancyAdaline2.fit(X,Y2)
+fancyAdaline3=Adaline(0.01,15)
+fancyAdaline3.fit(X,Y3)
+results=[]
+results.append(fancyAdaline1.predict(df.iloc[140,[0,2]].values))
+results.append(fancyAdaline2.predict(df.iloc[140,[0,2]].values))
+results.append(fancyAdaline3.predict(df.iloc[140,[0,2]].values))
+minIndex=results.index(min(results))
+print minIndex #0: Iris-setosa, 1:Iris-versicolor, 2:Iris-virginica
+print results

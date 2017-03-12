@@ -33,12 +33,9 @@ class Perceptron():
 		return;
 		
 	def predict(self,data):
-		output=self.W[0] + np.dot(data,self.W[1:])
-		#print ("output value:", output)
-		if (output<0) :
-			return 'Iris-setosa'
-		else:
-			return 'Iris-vertosa'
+		result=np.dot(data,self.W[1:])+self.W[0]
+		result=np.where(result>=0,1,-1)
+		return result
 	
 df = pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data', header=None)
 y=df.iloc[0:100,4].values
@@ -53,12 +50,14 @@ X=df.iloc[0:100,[0,2]].values
 
 fancyPerceptron=Perceptron(0.1,10)
 fancyPerceptron.fit(X,y)
-returned=fancyPerceptron.predict(df.iloc[51,[0,2]].values)
-#test time! :D
-for i in range(100):
-	print "Actual ", df.iloc[i,4]
- 	if (fancyAdaline.predict(df.iloc[i,[0,2]].values)>=0):
- 		print "Predicted: Iris-versicolor"
- 	else:
- 		print "Predicted: Iris-setosa"
+predictions=fancyPerceptron.predict(X)
+print "misclassified: ", (y!=predictions).sum()
+
+
+# for i in range(100):
+# 	print "Actual ", df.iloc[i,4]
+#  	if (fancyAdaline.predict(df.iloc[i,[0,2]].values)>=0):
+#  		print "Predicted: Iris-versicolor"
+#  	else:
+#  		print "Predicted: Iris-setosa"
 	
