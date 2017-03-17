@@ -1,6 +1,8 @@
 import numpy as np 
 import pandas as pd
 import matplotlib.pyplot as plt
+from math import exp
+from sklearn import datasets
 
 class Adaline(object):
 	def __init__(self,learning_rate,epochs):
@@ -22,26 +24,28 @@ class Adaline(object):
 		r=np.random.permutation(len(y))
 		return X[r],y[r]
 	def predict(self,data):
-		result=np.dot(data,self.W[1:])+self.W[0]
-		result=np.where(result>=0,1,-1)
-		return result
-		
-
-df = pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data', header=None)
-y = df.iloc[0:100, 4].values
-y = np.where(y == 'Iris-setosa', -1, 1)
-X = df.iloc[0:100, [0, 2]].values
-# X_std=np.copy(X)
-# X_std[:,0] = (X[:,0] - X[:,0].mean()) / X[:,0].std()
-# X_std[:,1] = (X[:,1] - X[:,1].mean()) / X[:,1].std()
+		result=[]
+		probabilities=[]
+		for i in data:
+			nooby=np.dot(i,self.W[1:])+self.W[0]
+			probabilities.append(1/(1+exp(-nooby)))
+			if nooby>0:
+				nooby=1
+			else:
+				nooby=-1
+			result.append(nooby)
+		return result,probabilities
+df = datasets.load_iris()
+y = df.target[0:100]
+y = np.where(y == 0, -1, 1)
+X = df.data[0:100,[0,2]]
 fancyAdaline=Adaline(0.01,15)
 fancyAdaline.fit(X,y)
-predictions=fancyAdaline.predict(X)
-print "misclassified: ", (y!=predictions).sum()
-# for i in range(100):
-# 	print "Actual ", df.iloc[i,4]
-#  	if (fancyAdaline.predict(df.iloc[i,[0,2]].values)>=0):
-#  		print "Predicted: Iris-versicolor"
-#  	else:
-#  		print "Predicted: Iris-setosa"
+results,probabilities=fancyAdaline.predict(X)
+print "misclassified: ", (y!=results).sum()
+for i in range(len(probabilities)):
+	if abs(probabilities[i]-0.5)<0.1:
+		print "Dangerous position ", i , "with probability ", probabilities[i]
+
+
 
