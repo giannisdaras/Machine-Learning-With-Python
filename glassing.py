@@ -8,10 +8,10 @@ df=pd.read_csv('datasets/glass.csv')
 # print (df.describe())
 X=df.iloc[:,:8]
 y=df.iloc[:,9]
-
+fold_numbers=5
 #KNN
 classifier=KNeighborsClassifier(n_neighbors=1)
-print (cross_val_score(classifier,X,y,cv=5).sum()/5)
+print (cross_val_score(classifier,X,y,cv=fold_numbers).sum()/fold_numbers)
 
 
 
