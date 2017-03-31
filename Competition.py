@@ -13,20 +13,43 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.neural_network import MLPClassifier
 from sklearn import preprocessing
 from sklearn.naive_bayes import GaussianNB
+from sklearn.decomposition import PCA
 
-df=pd.read_csv('datasets/Iris.csv')
-# print (df.describe())
-X=df.iloc[:,1:4]
-y=df.iloc[:,5]
-fold_numbers=5
+df=pd.read_csv('datasets/glass.csv')
+print (df.describe())
+X=df.iloc[:,0:8] #choose correct columns
+y=df.iloc[:,9] #choose correct columns
+fold_numbers=5 #constant for kfold
 
-X=SelectKBest(chi2,k=3).fit_transform(X,y)
+#Information about the dataset
+targets=[]
+for i in y:
+	if (i not in targets):
+		targets.append(i)
+times=[]
+yList=list(y)
+for j in targets:
+	times.append("%.2f" %(yList.count(j)/len(yList)))
+print ("Targets: ",targets)
+print ("Total number of samples: ",len(y))
+print ("Percentage of each class: ",times)
+
+#Feature extraction:
+# pcaExtractor=PCA(n_components=5)
+# X=pcaExtractor.fit_transform(X)
+
+# Selecting features
+# X=SelectKBest(chi2,k=3).fit_transform(X,y)
+
+# Data standarization
 # sc=StandardScaler()
-# X=sc.fit_transform(X)	
+# X=sc.fit_transform(X)
+
+#Data normalization	
 # X=preprocessing.scale(X)
 
 #KNN
-knnSimpleClf=KNeighborsClassifier(n_neighbors=9)
+knnSimpleClf=KNeighborsClassifier(n_neighbors=3)
 # k=np.arange(0,80,1)+1
 # parameters={'n_neighbors':k}
 # clf=GridSearchCV(knnSimpleClf,parameters,cv=5)
@@ -42,7 +65,7 @@ print ('Knn scoring: ',cross_val_score(knnSimpleClf,X,y,cv=fold_numbers).sum()/f
 # clf=GridSearchCV(svm,params,cv=5)
 # clf.fit(X,y)
 # print (clf.best_params_)
-svm=SVC(kernel='poly',C=0.01,gamma=1.0)
+svm=SVC(kernel='linear',C=100.0,gamma=1.0)
 print ('SVM score: ',cross_val_score(svm,X,y,cv=fold_numbers).sum()/fold_numbers)
 
 #Forest
@@ -75,7 +98,7 @@ print ('Logistic scoring: ',cross_val_score(logr,X,y,cv=fold_numbers).sum()/fold
 # clf=GridSearchCV(multiP,params,cv=5)
 # clf.fit(X,y)
 # print (clf.best_params_)
-multiP=MLPClassifier(learning_rate_init=0.01,hidden_layer_sizes=(100,))
+multiP=MLPClassifier(learning_rate_init=0.01,hidden_layer_sizes=(500,))
 print ('MLP scoring: ',cross_val_score(logr,X,y,cv=fold_numbers).sum()/fold_numbers)
 
 #Naive Bayes
