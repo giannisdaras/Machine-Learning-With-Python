@@ -16,13 +16,15 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.decomposition import PCA
 from sklearn.ensemble import VotingClassifier
 
-df=pd.read_csv('datasets/Iris.csv')
+df=pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data')
 # print (df.describe())
+# print (df.isnull().any()) #find empty columns
+# print (df.isnull().any().any()) #check if there is empty value
 # with pd.option_context('display.max_rows', None, 'display.max_columns', 3):
     # print (df)
 
-X=df.iloc[:,1:4] #choose correct columns
-y=df.iloc[:,5] #choose correct columns
+X=df.iloc[:,1:13] #choose correct columns
+y=df.iloc[:,0] #choose correct columns
 fold_numbers=5 #constant for kfold
 
 #Information about the dataset
@@ -49,8 +51,8 @@ print ("Percentage of each class: ",percentage)
 # X=SelectKBest(chi2,k=3).fit_transform(X,y)
 
 # Data standarization
-# sc=StandardScaler()
-# X=sc.fit_transform(X)
+sc=StandardScaler()
+X=sc.fit_transform(X)
 
 #Data normalization	
 # X=preprocessing.scale(X)
@@ -72,7 +74,7 @@ print ('Knn scoring: ',cross_val_score(knnSimpleClf,X,y,cv=fold_numbers).sum()/f
 # clf=GridSearchCV(svm,params,cv=5)
 # clf.fit(X,y)
 # print (clf.best_params_)
-svm=SVC(kernel='linear',C=100.0,gamma=1.0)
+svm=SVC(kernel='rbf',C=10,gamma=0.01)
 print ('SVM score: ',cross_val_score(svm,X,y,cv=fold_numbers).sum()/fold_numbers)
 
 #Forest
@@ -83,7 +85,7 @@ print ('SVM score: ',cross_val_score(svm,X,y,cv=fold_numbers).sum()/fold_numbers
 # clf=GridSearchCV(forest,params,cv=5)
 # clf.fit(X,y)
 # print (clf.best_params_)
-forest=RandomForestClassifier(criterion='entropy',n_estimators=20,n_jobs=1)
+forest=RandomForestClassifier(criterion='entropy',n_estimators=31,n_jobs=1)
 print ('Forest scoring: ',cross_val_score(forest,X,y,cv=fold_numbers).sum()/fold_numbers)
 
 # Logistic Regression
