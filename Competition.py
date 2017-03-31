@@ -14,6 +14,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn import preprocessing
 from sklearn.naive_bayes import GaussianNB
 from sklearn.decomposition import PCA
+from sklearn.ensemble import VotingClassifier
 
 df=pd.read_csv('datasets/Iris.csv')
 # print (df.describe())
@@ -110,3 +111,7 @@ print ('MLP scoring: ',cross_val_score(logr,X,y,cv=fold_numbers).sum()/fold_numb
 #Naive Bayes
 bayesian=GaussianNB()
 print ('Bayesian naive scoring: ',cross_val_score(logr,X,y,cv=fold_numbers).sum()/fold_numbers)
+
+#Majority wins!
+plurality=VotingClassifier([('knn',knnSimpleClf),('svm',svm),('forest',forest),('regression',logr),('mlp',multiP),('naive',bayesian)],voting='hard',n_jobs=1)
+print ('Plurality: ',cross_val_score(plurality,X,y,cv=fold_numbers).sum()/fold_numbers)
