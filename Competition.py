@@ -15,10 +15,13 @@ from sklearn import preprocessing
 from sklearn.naive_bayes import GaussianNB
 from sklearn.decomposition import PCA
 
-df=pd.read_csv('datasets/glass.csv')
-print (df.describe())
-X=df.iloc[:,0:8] #choose correct columns
-y=df.iloc[:,9] #choose correct columns
+df=pd.read_csv('datasets/Iris.csv')
+# print (df.describe())
+# with pd.option_context('display.max_rows', None, 'display.max_columns', 3):
+    # print (df)
+
+X=df.iloc[:,1:4] #choose correct columns
+y=df.iloc[:,5] #choose correct columns
 fold_numbers=5 #constant for kfold
 
 #Information about the dataset
@@ -26,13 +29,16 @@ targets=[]
 for i in y:
 	if (i not in targets):
 		targets.append(i)
+percentage=[]
 times=[]
 yList=list(y)
 for j in targets:
-	times.append("%.2f" %(yList.count(j)/len(yList)))
+	percentage.append("%.2f" %(yList.count(j)/len(yList)))
+	times.append(yList.count(j))
 print ("Targets: ",targets)
 print ("Total number of samples: ",len(y))
-print ("Percentage of each class: ",times)
+print ("Samples that belong to each class: ",times)
+print ("Percentage of each class: ",percentage)
 
 #Feature extraction:
 # pcaExtractor=PCA(n_components=5)
