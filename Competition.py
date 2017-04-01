@@ -15,16 +15,18 @@ from sklearn import preprocessing
 from sklearn.naive_bayes import GaussianNB
 from sklearn.decomposition import PCA
 from sklearn.ensemble import VotingClassifier
+from sklearn.metrics import f1_score
 
-df=pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data')
+df=pd.read_csv('datasets/dataset1.csv')
 # print (df.describe())
 # print (df.isnull().any()) #find empty columns
 # print (df.isnull().any().any()) #check if there is empty value
 # with pd.option_context('display.max_rows', None, 'display.max_columns', 3):
-    # print (df)
+#     print (df)
+# print (df.shape)
 
-X=df.iloc[:,1:13] #choose correct columns
-y=df.iloc[:,0] #choose correct columns
+X=df.iloc[:,0:93] #choose correct columns
+y=df.iloc[:,94] #choose correct columns
 fold_numbers=5 #constant for kfold
 
 #Information about the dataset
@@ -64,6 +66,8 @@ knnSimpleClf=KNeighborsClassifier(n_neighbors=3)
 # clf=GridSearchCV(knnSimpleClf,parameters,cv=5)
 # clf.fit(X,y)
 # print (clf.best_params_)
+knnSimpleClf.fit(X,y)
+knnPredict=knnSimpleClf.predict(X)
 print ('Knn scoring: ',cross_val_score(knnSimpleClf,X,y,cv=fold_numbers).sum()/fold_numbers)
 
 # svm=SVC()
@@ -75,6 +79,8 @@ print ('Knn scoring: ',cross_val_score(knnSimpleClf,X,y,cv=fold_numbers).sum()/f
 # clf.fit(X,y)
 # print (clf.best_params_)
 svm=SVC(kernel='rbf',C=10,gamma=0.01)
+svm.fit(X,y)
+svmPredict=svm.predict(X)
 print ('SVM score: ',cross_val_score(svm,X,y,cv=fold_numbers).sum()/fold_numbers)
 
 #Forest
@@ -86,6 +92,8 @@ print ('SVM score: ',cross_val_score(svm,X,y,cv=fold_numbers).sum()/fold_numbers
 # clf.fit(X,y)
 # print (clf.best_params_)
 forest=RandomForestClassifier(criterion='entropy',n_estimators=31,n_jobs=1)
+forest.fit(X,y)
+forestPredict=forest.predict(X)
 print ('Forest scoring: ',cross_val_score(forest,X,y,cv=fold_numbers).sum()/fold_numbers)
 
 # Logistic Regression
@@ -97,6 +105,8 @@ print ('Forest scoring: ',cross_val_score(forest,X,y,cv=fold_numbers).sum()/fold
 # clf.fit(X,y)
 # print (clf.best_params_)
 logr=LogisticRegression(penalty='l2',C=10)
+logr.fit(X,y)
+logrPredict=logr.predict(X)
 print ('Logistic scoring: ',cross_val_score(logr,X,y,cv=fold_numbers).sum()/fold_numbers)
 
 #MLP
@@ -108,12 +118,39 @@ print ('Logistic scoring: ',cross_val_score(logr,X,y,cv=fold_numbers).sum()/fold
 # clf.fit(X,y)
 # print (clf.best_params_)
 multiP=MLPClassifier(learning_rate_init=0.01,hidden_layer_sizes=(500,))
-print ('MLP scoring: ',cross_val_score(logr,X,y,cv=fold_numbers).sum()/fold_numbers)
+multiP.fit(X,y)
+multiPredict=multiP.predict(X)
+print ('MLP scoring: ',cross_val_score(multiP,X,y,cv=fold_numbers).sum()/fold_numbers)
 
 #Naive Bayes
 bayesian=GaussianNB()
-print ('Bayesian naive scoring: ',cross_val_score(logr,X,y,cv=fold_numbers).sum()/fold_numbers)
+bayesian.fit(X,y)
+bayesianPredict=bayesian.predict(X)
+print ('Bayesian naive scoring: ',cross_val_score(bayesian,X,y,cv=fold_numbers).sum()/fold_numbers)
 
 #Majority wins!
 plurality=VotingClassifier([('knn',knnSimpleClf),('svm',svm),('forest',forest),('regression',logr),('mlp',multiP),('naive',bayesian)],voting='hard',n_jobs=1)
+plurality.fit(X,y)
+pluralityPredict=plurality.predict(X)
 print ('Plurality: ',cross_val_score(plurality,X,y,cv=fold_numbers).sum()/fold_numbers)
+
+f1=f1_score(y,knnPredict)
+f2=f1_score(y,svmPredict)
+f3=f1_score(y,forestPredict)
+f4=f1_score(y,logrPredict)
+f5=f1_score(y,multiPredict)
+f6=f1_score(y,bayesianPredict)
+f7=f1_score(y,pluralityPredict)
+print ('Knn: ',f1)
+print ('Svm: ',f2)
+print ('Forest: ',f3)
+print ('Logistic ',f4)
+print ('MLP ',f5)
+print ('Bayesian: ',f6)
+print ('Plurality: ',f7)
+
+
+
+
+
+
